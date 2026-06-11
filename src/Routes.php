@@ -43,7 +43,7 @@ class Routes
         return file_exists($this->cachePath() . '/' . $file);
     }
 
-    private function canRun(string $route, string $method): bool
+    public function canRun(string $route, string $method): bool
     {
         $sql = 'select 
             dynamic_routes.route 
@@ -63,11 +63,13 @@ class Routes
         return false;
     }
 
-    private function run(string $route, string $method): bool
+    public function run(string $route, string $method): bool
     {
         $sql = 'select 
             dynamic_routes.id,
-            dynamic_routes.route 
+            dynamic_routes.route,
+            dynamic_routes.template,
+            dynamic_routes.checksum
         from 
             dynamic_routes
             join dynamic_routes_methods on dynamic_routes_methods.route_id = dynamic_routes.id
@@ -77,6 +79,20 @@ class Routes
         $result = self::$dbInstance->singleRow($sql, ['route' => $route, 'method' => $method], 'route');
 
         if ($result) {
+
+            if (!$this->exists($result['id'] . '.php')) {
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', $result['template']);
+            }
+
+            if (file_exists($this->cachePath() . '/' . $result['id'] . '.php')) {
+                $checksum = md5_file($this->cachePath() . '/' . $result['id'] . '.php');
+                if ($checksum !== $result['checksum']) {
+                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', $result['template']);
+                }
+            }
+
+
+
             if (preg_match('#^' . $result['route'] . '$#', $route, $matches)) {
 
                 include $this->cachePath() . '/' . $result['id'] . '.php';

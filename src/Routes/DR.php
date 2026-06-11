@@ -4,13 +4,7 @@ namespace Tualo\Office\DynamicRoutes;
 
 use Tualo\Office\Basic\TualoApplication;
 use Tualo\Office\Basic\Route;
-use Tualo\Office\Basic\IRoute;
-use Tualo\Office\DS\DSTable;
-
-use Tualo\Office\PUG\PUG2;
-use Tualo\Office\PUG\PUGRenderingHelper;
-
-use Tualo\Office\CMS\CMSMiddlewareHelper;
+use Tualo\Office\DynamicRoutes\Routes;
 
 class DR extends \Tualo\Office\Basic\RouteWrapper
 {
@@ -23,10 +17,16 @@ class DR extends \Tualo\Office\Basic\RouteWrapper
     {
         Route::add('/dr/(?P<route>.*)', function ($matches) {
 
-            $session = TualoApplication::get('session');
-            $db = $session->getDB();
 
             try {
+                $routeInstance = Routes::getInstance();
+                if ($routeInstance->canRun($matches['route'], $_SERVER['REQUEST_METHOD'])) {
+                    $routeInstance->run($matches['route'], $_SERVER['REQUEST_METHOD']);
+                    return;
+                } else {
+                    http_response_code(404);
+                    echo "Route not found";
+                }
             } catch (\Exception $e) {
                 http_response_code(500);
                 echo $e->getMessage();
