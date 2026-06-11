@@ -81,14 +81,21 @@ class Routes
         if ($result) {
 
             if (!$this->exists($result['id'] . '.php')) {
-                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php" . PHP_EOL . $result['template']);
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php " . PHP_EOL . $result['template']);
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.md5', md5($result['template']));
+            }
+
+            if (md5($result['template']) !== file_get_contents($this->cachePath() . '/' . $result['id'] . '.md5')) {
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php " . PHP_EOL . $result['template']);
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.md5', md5($result['template']));
             }
 
             if (file_exists($this->cachePath() . '/' . $result['id'] . '.php')) {
-                $checksum = md5_file($this->cachePath() . '/' . $result['id'] . '.php');
+                $checksum = file_get_contents($this->cachePath() . '/' . $result['id'] . '.md5');
                 if ($checksum !== $result['checksum']) {
-                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php" . PHP_EOL . $result['template']);
-                    $checksum = md5_file($this->cachePath() . '/' . $result['id'] . '.php');
+                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php // " . md5($result['template']) . PHP_EOL . $result['template']);
+                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.md5', md5($result['template']));
+                    $checksum = md5($result['template']);
                     $sql = 'update dynamic_routes set checksum = {checksum} where id = {id}';
                     self::$dbInstance->direct($sql, ['checksum' => $checksum, 'id' => $result['id']]);
                 }
