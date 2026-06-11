@@ -76,7 +76,7 @@ class Routes
         where 
             dynamic_routes.route = {route} and dynamic_routes_methods.method = {method}';
 
-        $result = self::$dbInstance->singleRow($sql, ['route' => $route, 'method' => $method], 'route');
+        $result = self::$dbInstance->singleRow($sql, ['route' => $route, 'method' => $method]);
 
         if ($result) {
 
