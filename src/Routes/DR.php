@@ -2,7 +2,7 @@
 
 namespace Tualo\Office\DynamicRoutes;
 
-use Tualo\Office\Basic\TualoApplication;
+use Tualo\Office\Basic\TualoApplication as App;
 use Tualo\Office\Basic\Route;
 use Tualo\Office\DynamicRoutes\Routes;
 
