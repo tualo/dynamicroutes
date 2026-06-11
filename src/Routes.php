@@ -83,6 +83,7 @@ class Routes
             $prefix =
                 "<?php " . PHP_EOL .
                 "use Exception;"  . PHP_EOL .
+                "use Tualo\Office\DS\DSTable;" . PHP_EOL .
                 "use Tualo\Office\Basic\TualoApplication as App;" . PHP_EOL .
                 "use Tualo\Office\Basic\Route;" . PHP_EOL .
                 "try {" . PHP_EOL;
