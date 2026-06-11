@@ -22,7 +22,7 @@ class Routes
     private function initialize(): void
     {
         if (!self::$initalized) {
-            $session = TualoApplication::get('session');
+            $session = App::get('session');
             self::$dbInstance = $session->getDB();
 
             self::cachePath();
