@@ -81,13 +81,16 @@ class Routes
         if ($result) {
 
             if (!$this->exists($result['id'] . '.php')) {
-                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', $result['template']);
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php" . PHP_EOL . $result['template']);
             }
 
             if (file_exists($this->cachePath() . '/' . $result['id'] . '.php')) {
                 $checksum = md5_file($this->cachePath() . '/' . $result['id'] . '.php');
                 if ($checksum !== $result['checksum']) {
-                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', $result['template']);
+                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php" . PHP_EOL . $result['template']);
+                    $checksum = md5_file($this->cachePath() . '/' . $result['id'] . '.php');
+                    $sql = 'update dynamic_routes set checksum = {checksum} where id = {id}';
+                    self::$dbInstance->direct($sql, ['checksum' => $checksum, 'id' => $result['id']]);
                 }
             }
 
