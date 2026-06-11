@@ -1,0 +1,25 @@
+{
+  "name": "tualo/dynamicroutes",
+  "description": "tualo - dynamic routes",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Thomas Hoffmann",
+      "email": "thomas.hoffmann@tualo.de"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Tualo\\DynamicRoutes\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "tualo/bsc": "^1.6"
+  },
+  "version": "1.0.1"
+}
