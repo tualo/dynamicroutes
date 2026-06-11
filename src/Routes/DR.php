@@ -29,7 +29,7 @@ class DR extends \Tualo\Office\Basic\RouteWrapper
                 }
             } catch (\Exception $e) {
                 http_response_code(500);
-                echo $e->getMessage();
+                App::logger('DynamicRoutes')->error($e->getMessage());
             }
         }, ['get', 'post', 'put', 'delete'], false, [], self::scope());
     }
