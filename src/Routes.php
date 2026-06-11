@@ -68,7 +68,7 @@ class Routes
         $sql = 'select 
             dynamic_routes.id,
             dynamic_routes.route,
-            dynamic_routes.template,
+            dynamic_routes.routetemplate template,
             dynamic_routes.checksum
         from 
             dynamic_routes
