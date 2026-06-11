@@ -80,20 +80,32 @@ class Routes
 
         if ($result) {
 
+            $prefix =
+                "<?php " . PHP_EOL .
+                "use Exception;"  . PHP_EOL .
+                "use Tualo\Office\Basic\TualoApplication as App;" . PHP_EOL .
+                "use Tualo\Office\Basic\Route;" . PHP_EOL .
+                "try {" . PHP_EOL;
+            "} catch (Exception \$e) {" . PHP_EOL .
+                "    http_response_code(500);" . PHP_EOL .
+                "    echo json_encode(['error' => \$e->getMessage()]);" . PHP_EOL .
+                "}";
+
+
             if (!$this->exists($result['id'] . '.php')) {
-                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php " . PHP_EOL . $result['template']);
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', $prefix . $result['template']);
                 file_put_contents($this->cachePath() . '/' . $result['id'] . '.md5', md5($result['template']));
             }
 
             if (md5($result['template']) !== file_get_contents($this->cachePath() . '/' . $result['id'] . '.md5')) {
-                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php " . PHP_EOL . $result['template']);
+                file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', $prefix . $result['template']);
                 file_put_contents($this->cachePath() . '/' . $result['id'] . '.md5', md5($result['template']));
             }
 
             if (file_exists($this->cachePath() . '/' . $result['id'] . '.php')) {
                 $checksum = file_get_contents($this->cachePath() . '/' . $result['id'] . '.md5');
                 if ($checksum !== $result['checksum']) {
-                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', "<?php // " . md5($result['template']) . PHP_EOL . $result['template']);
+                    file_put_contents($this->cachePath() . '/' . $result['id'] . '.php', $prefix . $result['template']);
                     file_put_contents($this->cachePath() . '/' . $result['id'] . '.md5', md5($result['template']));
                     $checksum = md5($result['template']);
                     $sql = 'update dynamic_routes set checksum = {checksum} where id = {id}';
